@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Conversational Survival Kit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --accent-light: #e0f2fe;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.05em;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar:focus {
+            border-color: var(--accent);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .utility-zone {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .subcat-select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-main);
+        }
+
+        .toggle-btn {
+            background: var(--accent-light);
+            color: var(--accent);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 180px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            font-size: 2.2rem;
+            text-align: right;
+            direction: rtl;
+            color: var(--text-main);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .transliteration {
+            font-style: italic;
+            color: var(--accent);
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .english-text {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .flashcard-mode .english-text {
+            opacity: 0;
+            background: #cbd5e1;
+            color: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .flashcard-mode .english-text.revealed {
+            opacity: 1;
+            background: none;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem 0.5rem; }
+            header h1 { font-size: 1.8rem; }
+            .vocab-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Arabic Conversational Survival Kit</h1>
+        <p>Interactive Resource Dashboard (230 Core Elements)</p>
+    </header>
+
+    <div class="controls">
+        <div class="search-wrapper">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search by English, Arabic script, or transliteration...">
+        </div>
+        
+        <div class="filter-tabs" id="typeTabs">
+            <button class="tab-btn active" data-type="all">All Items</button>
+            <button class="tab-btn" data-type="Connector">Connectors (30)</button>
+            <button class="tab-btn" data-type="Noun">Nouns (100)</button>
+            <button class="tab-btn" data-type="Verb">Verbs (100)</button>
+        </div>
+
+        <div class="utility-zone">
+            <select id="subcatFilter" class="subcat-select">
+                <option value="all">All Subcategories</option>
+            </select>
+            <button id="flashcardToggle" class="toggle-btn">Toggle Flashcard Mode</button>
+        </div>
+    </div>
+
+    <div class="vocab-grid" id="vocabGrid"></div>
+</div>
+
+<script>
+    // Embedded dataset compiled directly from requirements documentation
+    const vocabData = [
+        // PART 1: CONNECTORS (30)
+        { arabic: "أَنَا", trans: "Anā", eng: "I", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "أَنْتَ", trans: "Anta", eng: "You (Masculine singular)", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "أَنْتِ", trans: "Anti", eng: "You (Feminine singular)", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "هُوَ", trans: "Huwa", eng: "He / It", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "هِيَ", trans: "Hiya", eng: "She / It", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "نَحْنُ", trans: "Naḥnu", eng: "We", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "أَنْتُمْ", trans: "Antum", eng: "You all (Plural)", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "هُمْ", trans: "Hum", eng: "They", type: "Connector", cat: "Personal Pronouns" },
+        { arabic: "هَذَا", trans: "Hādhā", eng: "This (Masculine)", type: "Connector", cat: "Pointers" },
+        { arabic: "هَذِهِ", trans: "Hādhihi", eng: "This / These (Feminine & Non-human plurals)", type: "Connector", cat: "Pointers" },
+        { arabic: "ذَلِكَ", trans: "Dhālika", eng: "That (Masculine)", type: "Connector", cat: "Pointers" },
+        { arabic: "تِلْكَ", trans: "Tilka", eng: "That (Feminine)", type: "Connector", cat: "Pointers" },
+        { arabic: "فِي", trans: "Fī", eng: "In / At", type: "Connector", cat: "Prepositions" },
+        { arabic: "إِلَى", trans: "Ilā", eng: "To / Towards", type: "Connector", cat: "Prepositions" },
+        { arabic: "مِنْ", trans: "Min", eng: "From / Than", type: "Connector", cat: "Prepositions" },
+        { arabic: "عَلَى", trans: "‘Alā", eng: "On / Upon", type: "Connector", cat: "Prepositions" },
+        { arabic: "مَعَ", trans: "Ma‘a", eng: "With (Someone)", type: "Connector", cat: "Prepositions" },
+        { arabic: "بِـ", trans: "Bi-", eng: "With / By using (Something)", type: "Connector", cat: "Prepositions" },
+        { arabic: "لِـ / لِأَجْل", trans: "Li- / Li-ajl", eng: "For / Because of", type: "Connector", cat: "Prepositions" },
+        { arabic: "وَ", trans: "Wa", eng: "And", type: "Connector", cat: "Sentence Links" },
+        { arabic: "أَوْ", trans: "Aw", eng: "Or", type: "Connector", cat: "Sentence Links" },
+        { arabic: "لَكِنْ", trans: "Lākin", eng: "But", type: "Connector", cat: "Sentence Links" },
+        { arabic: "لِأَنَّ", trans: "Li-anna", eng: "Because", type: "Connector", cat: "Sentence Links" },
+        { arabic: "بَعْدَ", trans: "Ba‘da", eng: "After", type: "Connector", cat: "Sentence Links" },
+        { arabic: "قَبْلَ", trans: "Qabla", eng: "Before", type: "Connector", cat: "Sentence Links" },
+        { arabic: "إِذَا", trans: "Idhā", eng: "If", type: "Connector", cat: "Sentence Links" },
+        { arabic: "مَاذَا؟", trans: "Mādhā?", eng: "What? (Before verbs)", type: "Connector", cat: "Questions" },
+        { arabic: "مَا؟", trans: "Mā?", eng: "What? (Before nouns)", type: "Connector", cat: "Questions" },
+        { arabic: "أَيْنَ؟", trans: "Ayna?", eng: "Where?", type: "Connector", cat: "Questions" },
+        { arabic: "مَتَى؟", trans: "Matā?", eng: "When?", type: "Connector", cat: "Questions" },
+        { arabic: "لِمَاذَا؟", trans: "Limādhā?", eng: "Why?", type: "Connector", cat: "Questions" },
+        { arabic: "مَنْ؟", trans: "Man?", eng: "Who?", type: "Connector", cat: "Questions" },
+        { arabic: "كَيْفَ؟", trans: "Kayfa?", eng: "How?", type: "Connector", cat: "Questions" },
+
+        // PART 2: NOUNS (100)
+        { arabic: "أَب [آبَاء]", trans: "Ab / Ābā'", eng: "Father", type: "Noun", cat: "People & Relationships" },
+        { arabic: "أُم [أُمَّهَات]", trans: "Umm / Ummahāt", eng: "Mother", type: "Noun", cat: "People & Relationships" },
+        { arabic: "رَجُل [رِجَال]", trans: "Rajul / Rijāl", eng: "Man", type: "Noun", cat: "People & Relationships" },
+        { arabic: "امْرَأَة [نِسَاء]", trans: "Imra'ah / Nisā'", eng: "Woman", type: "Noun", cat: "People & Relationships" },
+        { arabic: "وَلَد [أَوْلَاد]", trans: "Walad / Awlād", eng: "Boy / Child", type: "Noun", cat: "People & Relationships" },
+        { arabic: "بِنْت [بَنَات]", trans: "Bint / Banāt", eng: "Girl / Daughter", type: "Noun", cat: "People & Relationships" },
+        { arabic: "ابْن [أَبْنَاء]", trans: "Ibn / Abnā'", eng: "Son", type: "Noun", cat: "People & Relationships" },
+        { arabic: "أَخ [إِخْوَة]", trans: "Akh / Ikhwah", eng: "Brother", type: "Noun", cat: "People & Relationships" },
+        { arabic: "أُخْت [أَخَوَات]", trans: "Ukht / Akhawāt", eng: "Sister", type: "Noun", cat: "People & Relationships" },
+        { arabic: "صَدِيق [أَصْدِقَاء]", trans: "Ṣadīq / Aṣdiqā'", eng: "Friend", type: "Noun", cat: "People & Relationships" },
+        { arabic: "شَخْص [أَشْخَاص]", trans: "Shakhṣ / Ashkhāṣ", eng: "Person", type: "Noun", cat: "People & Relationships" },
+        { arabic: "نَاس", trans: "Nās", eng: "People", type: "Noun", cat: "People & Relationships" },
+        { arabic: "عَائِلَة [عَائِلَات]", trans: "‘Ā'ilah / ‘Ā'ilāt", eng: "Family", type: "Noun", cat: "People & Relationships" },
+        { arabic: "مُدِير [مُدِيرُونَ]", trans: "Mudīr / Mudīrūn", eng: "Manager / Boss", type: "Noun", cat: "People & Relationships" },
+        { arabic: "أُسْتَاذ [أَسَاتِذَة]", trans: "Ustādh / Asātidhah", eng: "Teacher / Professor", type: "Noun", cat: "People & Relationships" },
+        { arabic: "بَيْت [بُيُوت]", trans: "Bayt / Buyūt", eng: "House / Home", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَدِينَة [مُدُن]", trans: "Madīnah / Mudun", eng: "City", type: "Noun", cat: "Places & Environments" },
+        { arabic: "بَلَد [بِلَاد]", trans: "Balad / Bilād", eng: "Country", type: "Noun", cat: "Places & Environments" },
+        { arabic: "شَارِع [شَوَارِع]", trans: "Shāri‘ / Shawāri‘", eng: "Street", type: "Noun", cat: "Places & Environments" },
+        { arabic: "طَرِيق [طُرُق]", trans: "Ṭarīq / Ṭuruq", eng: "Road / Way", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَكْتَب [مَكَاتِب]", trans: "Maktab / Makātib", eng: "Office / Desk", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَدْرَسَة [مَدَارِس]", trans: "Madrasah / Madāris", eng: "School", type: "Noun", cat: "Places & Environments" },
+        { arabic: "جَامِعَة [جَامِعَات]", trans: "Jāmi‘ah / Jāmi‘āt", eng: "University", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَسْجِد [مَسَاجِد]", trans: "Masjid / Masājid", eng: "Mosque", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَطْعَم [مَطَاعِم]", trans: "Maṭ‘am / Maṭā‘im", eng: "Restaurant", type: "Noun", cat: "Places & Environments" },
+        { arabic: "فُنْدُق [فَنَادِق]", trans: "Funduq / Fanādiq", eng: "Hotel", type: "Noun", cat: "Places & Environments" },
+        { arabic: "سُوق [أَسْوَاق]", trans: "Sūq / Aswāq", eng: "Market / Souq", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مُسْتَشْفَى [مُسْتَشْفَيَات]", trans: "Mustashfā / Mustashfayāt", eng: "Hospital", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَحَطَّة [مَحَطَّات]", trans: "Maḥaṭṭah / Maḥaṭṭāt", eng: "Station (Train/Bus)", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَكَان [أَمَاكِن]", trans: "Makān / Amākin", eng: "Place", type: "Noun", cat: "Places & Environments" },
+        { arabic: "مَاء [مِيَاه]", trans: "Mā' / Miyāh", eng: "Water", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "أَكْل", trans: "Akl", eng: "Food", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "خُبْز", trans: "Khubz", eng: "Bread", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "شَاي", trans: "Shāy", eng: "Tea", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "قَهْوَة", trans: "Qahwah", eng: "Coffee", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "حَلِيب", trans: "Ḥalīb", eng: "Milk", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "لَحْم [لُحُوم]", trans: "Laḥm / Luḥūm", eng: "Meat", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "فَوَاكِه", trans: "Fawākih", eng: "Fruit", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "سَيَّارَة [سَيَّارَات]", trans: "Sayyārah / Sayyārāt", eng: "Car", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "هَاتِف [هَوَاتِف]", trans: "Hātif / Hawātif", eng: "Phone", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "حَاسُوب [حَوَاسِيب]", trans: "Ḥāsūb / Ḥawāsīb", eng: "Computer", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "كِتَاب [كُتُب]", trans: "Kitāb / Kutub", eng: "Book", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "قَلَم [أَقْلَام]", trans: "Qalam / Aqlām", eng: "Pen", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "وَرَقَة [أَوْرَاق]", trans: "Waraqah / Awrāq", eng: "Paper / Page", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "مِفْتَاح [مَفَاتِيح]", trans: "Miftāḥ / Mafātīḥ", eng: "Key", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "بَاب [أَبْوَاب]", trans: "Bāb / Abwāb", eng: "Door", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "شُبَّاك [شَبَابِيك]", trans: "Shubbāk / Shabābīk", eng: "Window", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "غُرْفَة [غُرَف]", trans: "Ghurfah / Ghuraf", eng: "Room", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "طَاوِلَة [طَاوِلَات]", trans: "Ṭāwilah / Ṭāwilāt", eng: "Table", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "كُرْسِيّ [كَرَاسِي]", trans: "Kursiyy / Karāsī", eng: "Chair", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "وَقْت [أَوْقَات]", trans: "Waqt / Awqāt", eng: "Time", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "سَاعَة [سَاعَات]", trans: "Sā‘ah / Sā‘āt", eng: "Hour / Clock / Watch", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "يَوْم [أَيَّام]", trans: "Yawm / Ayyām", eng: "Day", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "أُسْبُوع [أَسَابِيع]", trans: "Usbū‘ / Asābī‘", eng: "Week", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "شَهْر [شُهُور]", trans: "Shahr / Shuhūr", eng: "Month", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "سَنَة [سَنَوَات]", trans: "Sanah / Sanawāt", eng: "Year", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "صَبَاح", trans: "Ṣabāḥ", eng: "Morning", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "مَسَاء", trans: "Masā'", eng: "Evening", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "لَيْلَة [لَيَالِي]", trans: "Laylah / Layālī", eng: "Night", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "الْيَوْم", trans: "Al-yawm", eng: "Today", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "غَدًا", trans: "Ghadan", eng: "Tomorrow", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "أَمْس", trans: "Ams", eng: "Yesterday", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "مَوْعِد [مَوَاعِيد]", trans: "Maw‘id / Mawā‘īd", eng: "Appointment", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "دَقِيقَة [دَقَائِق]", trans: "Daqīqah / Daqā'iq", eng: "Minute", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "ثَانِيَة [ثَوَانِي]", trans: "Thāniyah / Thawānī", eng: "Second", type: "Noun", cat: "Time & Tracking" },
+        { arabic: "شَيْء [أَشْيَاء]", trans: "Shay' / Ashyā'", eng: "Thing", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "كَلِمَة [كَلِمَات]", trans: "Kalimah / Kalimāt", eng: "Word", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "سُؤَال [أَسْئِلَة]", trans: "Su'āl / As'ilah", eng: "Question", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "جَوَاب [أَجْوِبَة]", trans: "Jawāb / Ajwibah", eng: "Answer", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "مُشْكِلَة [مَشَاكِل]", trans: "Mushkilah / Mashākil", eng: "Problem", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "فِكْرَة [أَفْكَار]", trans: "Fikrah / Afkār", eng: "Idea", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "عَمَل [أَعْمَال]", trans: "‘Amal / A‘māl", eng: "Work / Job", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "مَال / فُلُوس", trans: "Māl / Fulūs", eng: "Money", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "حَقِيقَة [حَقَائِق]", trans: "Ḥaqīqah / Ḥaqā'iq", eng: "Truth / Fact", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "رَأْي [آرَاء]", trans: "Ra'y / Ārā'", eng: "Opinion", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "سَبَب [أَسْبَاب]", trans: "Sabab / Asbāb", eng: "Reason", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "قِصَّة [قِصَص]", trans: "Qiṣṣah / Qiṣaṣ", eng: "Story", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "شُعُور [مَشَاعِر]", trans: "Shu‘ūr / Mash‘āir", eng: "Feeling", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "صِحَّة", trans: "Ṣiḥḥah", eng: "Health", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "حَيَاة", trans: "Ḥayāh", eng: "Life", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "لُغَة [لُغَات]", trans: "Lughah / Lughāt", eng: "Language", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "دَرْس [دُرُوس]", trans: "Dars / Durūs", eng: "Lesson", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "مَعْلُومَة [مَعْلُومَات]", trans: "Ma‘lūmah / Ma‘lūmāt", eng: "Information", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "سِعْر [أَسْعَار]", trans: "Si‘r / As‘ār", eng: "Price", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "مَوْقِع [مَوَاقِع]", trans: "Mawqi‘ / Mawāqi‘", eng: "Location / Website", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "شَمْس", trans: "Shams", eng: "Sun", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "قَمَر", trans: "Qamar", eng: "Moon", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "بَحْر [بِحَار]", trans: "Baḥr / Biḥār", eng: "Sea", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "مَطَر [أَمْطَار]", trans: "Maṭar / Amṭār", eng: "Rain", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "جَو / طَقْس", trans: "Jaw / Ṭaqs", eng: "Weather", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "مَلَابِس", trans: "Malābis", eng: "Clothes", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "حِذَاء [أَحْذِيَة]", trans: "Ḥidhā' / Aḥdhiyah", eng: "Shoe", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "حَقِيبَة [حَقَائِب]", trans: "Ḥaqībah / Ḥaqā'ib", eng: "Bag / Backpack", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "نَافِذَة [نَوَافِذ]", trans: "Nāfidhah / Nawāfidh", eng: "Window", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "سُور [أَسْوَار]", trans: "Sūr / Aswār", eng: "Wall / Fence", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "أَرْض [أَرَاضِي]", trans: "Arḍ / Arāḍī", eng: "Earth / Ground", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "نَار [نِيرَان]", trans: "Nār / Nīrān", eng: "Fire", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "نُور [أَنْوَار]", trans: "Nūr / Anwār", eng: "Light", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "وَرْد", trans: "Ward", eng: "Flowers", type: "Noun", cat: "Nature, Dress & Living" },
+        { arabic: "حَيَوَان [حَيَوَانَات]", trans: "Ḥayawān / Ḥayawānāt", eng: "Animal", type: "Noun", cat: "Nature, Dress & Living" },
+
+        // PART 3: VERBS (100)
+        { arabic: "أَرَادَ / يُرِيدُ", trans: "Arāda / Yurīdu", eng: "To want", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "فَعَلَ / يَفْعَلُ", trans: "Fa‘ala / Yaf‘alu", eng: "To do / make", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "قَالَ / يَقُولُ", trans: "Qāla / Yaqūlu", eng: "To say", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "كَانَ / يَكُونُ", trans: "Kāna / Yakūnu", eng: "To be / was", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "جَاءَ / يَجِيءُ", trans: "Jā'e / Yajī'u", eng: "To come", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "ذَهَبَ / يَذْهَبُ", trans: "Dhahaba / Yadhhabu", eng: "To go", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "أَكَلَ / يَأْكُلُ", trans: "Akala / Ya'kulu", eng: "To eat", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "شَرِبَ / يَشْرَبُ", trans: "Shariba / Yashrabu", eng: "To drink", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "رَأَى / يَرَى", trans: "Ra'ā / Yarā", eng: "To see", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "شَاهَدَ / يُشَاهِدُ", trans: "Shāhada / Yushāhidu", eng: "To watch", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "أَخَذَ / يَأْخُذُ", trans: "Akhadha / Ya'khudhu", eng: "To take", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "أَعْطَى / يُعْطِي", trans: "A‘ṭā / Yu‘ṭī", eng: "To give", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "جَلَسَ / يَجْلِسُ", trans: "Jalasa / Yajlisu", eng: "To sit", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "قَامَ / يَقُومُ", trans: "Qāma / Yaqūmu", eng: "To stand up / rise", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "مَشَى / يَمْشِي", trans: "Mashā / Yamshī", eng: "To walk", type: "Verb", cat: "Core Motions & Actions" },
+        { arabic: "تَكَلَّمَ / يَتَكَلَّمُ", trans: "Takallama / Yatakallamu", eng: "To speak", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "سَمِعَ / يَسْمَعُ", trans: "Sami‘a / Yasma‘u", eng: "To hear / listen", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "كَتَبَ / يَكْتُبُ", trans: "Kataba / Yaktubu", eng: "To write", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "قَرَأَ / يَقْرَأُ", trans: "Qara'a / Yaqra'u", eng: "To read", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "سَأَلَ / يَسْأَلُ", trans: "Sa'ala / Yas'alu", eng: "To ask", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "أَجَابَ / يُجِيبُ", trans: "Ajāba / Yujību", eng: "To answer", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "اتَّصَلَ / يَتَّصِلُ", trans: "Ittaṣala / Yattaṣilu", eng: "To call / contact", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "أَرْسَلَ / يُرْسِلُ", trans: "Arsala / Yursilu", eng: "To send", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "طَلَبَ / يَطْلُبُ", trans: "Ṭalaba / Yaṭlubu", eng: "To request / order", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "سَاعَدَ / يُسَاعِدُ", trans: "Sā‘ada / Yusā‘idu", eng: "To help", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "شَكَرَ / يَشْكُرُ", trans: "Shakara / Yashkuru", eng: "To thank", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "عَرَفَ / يَعْرِفُ", trans: "‘Arafa / Ya‘rifu", eng: "To know", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "فَهِمَ / يَفْهَمُ", trans: "Fahima / Yafhamu", eng: "To understand", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "تَذَكَّرَ / يَتَذَكَّرُ", trans: "Tadhakkara / Yatadhakkaru", eng: "To remember", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "نَسِيَ / يَنْسَى", trans: "Nasiya / Yansā", eng: "To forget", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "ضَحِكَ / يَضْحَكُ", trans: "Ḍaḥika / Yaḍḥaku", eng: "To laugh", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "بَكَى / يَبْكِي", trans: "Bakā / Yabkī", eng: "To cry", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "أَحَبَّ / يُحِبُّ", trans: "Aḥabba / Yuḥibbu", eng: "To love / like", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "كَرِهَ / يَكْرَهُ", trans: "Kariha / Yakrahu", eng: "To hate", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "انْتَظَرَ / يَنْتَظِرُ", trans: "Intaẓara / Yantaẓiru", eng: "To wait", type: "Verb", cat: "Communication & Connection" },
+        { arabic: "سَافَرَ / يُسَافِرُ", trans: "Sāfara / Yusāfiru", eng: "To travel", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "دَخَلَ / يَدْخُلُ", trans: "Dakhala / Yadkhulu", eng: "To enter", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "خَرَجَ / يَخْرُجُ", trans: "Kharaja / Yakhruju", eng: "To exit / go out", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "وَصَلَ / يَصِلُ", trans: "Waṣala / Yaṣilu", eng: "To arrive", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "عَادَ / يَعُودُ", trans: "‘Āda / Ya‘ūdu", eng: "To return", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "رَكِبَ / يَرْكَبُ", trans: "Rakiba / Yarkabu", eng: "To ride / board", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "اشْتَرَى / يَشْتَرِي", trans: "Ishtarā / Yashtarī", eng: "To buy", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "بَاعَ / يَبِيعُ", trans: "Bā‘a / Yabī‘u", eng: "To sell", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "دَفَعَ / يَدْفَعُ", trans: "Dafa‘a / Yadfa‘u", eng: "To pay / push", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "بَحَثَ / يَبْحَثُ", trans: "Baḥatha / Yabḥathu", eng: "To search / look for (+ عَنْ)", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "وَجَدَ / يَجِدُ", trans: "Wajada / Yajidu", eng: "To find", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "ضَاعَ / يَضِيعُ", trans: "Ḍā‘a / Yaḍī‘u", eng: "To get lost", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "غَادَرَ / يُغَادِرُ", trans: "Ghādara / Yughādiru", eng: "To leave / depart", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "تَحَرَّكَ / يَتَحَرَّكُ", trans: "Taḥarraka / Yataḥarraku", eng: "To move", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "وَقَفَ / يَقِفُ", trans: "Waqafa / Yaqifu", eng: "To stop / stand", type: "Verb", cat: "Travel, Money & Movement" },
+        { arabic: "عَمِلَ / يَعْمَلُ", trans: "‘Amila / Ya‘malu", eng: "To work", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "دَرَسَ / يَدْرُسُ", trans: "Darasa / Yadrusu", eng: "To study", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "تَعَلَّمَ / يَتَعَلَّمُ", trans: "Ta‘allama / Yata‘allamu", eng: "To learn", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "عَلَّمَ / يُعَلِّمُ", trans: "‘Allama / Yu‘allimu", eng: "To teach", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "بَدَأَ / يَبْدَأُ", trans: "Bada'a / Yabda'u", eng: "To start", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "انْتَهَى / يَنْتَهِي", trans: "Intahā / Yantahī", eng: "To finish / end", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "نَجَحَ / يَنْجَحُ", trans: "Najaha / Yanjahu", eng: "To succeed / pass", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "فَشِلَ / يَفْشَلُ", trans: "Fashila / Yafshalu", eng: "To fail", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "فَكَّرَ / يُفَكِّرُ", trans: "Fakkara / Yufakkiru", eng: "To think", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "ظَنَّ / يَظُنُّ", trans: "Ẓanna / Yaẓunnu", eng: "To assume / think", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "اسْتَطَاعَ / يَسْتَطِيعُ", trans: "Istaṭā‘a / Yastaṭī‘u", eng: "To be able to (can)", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "غَيَّرَ / يُغَيِّرُ", trans: "Ghayyara / Yughayyiru", eng: "To change something", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "اسْتَخْدَمَ / يَسْتَخْدِمُ", trans: "Istakhdama / Yastakhdimu", eng: "To use", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "اخْتَارَ / يَخْتَارُ", trans: "Ikhtāra / Yakhtāru", eng: "To choose", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "حَاوَلَ / يُعَاوِلُ", trans: "Ḥāwala / Yuḥāwilu", eng: "To try", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "خَطَّطَ / يُخَطِّطُ", trans: "Khaṭṭaṭa / Yukhaṭṭiṭu", eng: "To plan", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "قَرَّرَ / يُقَرِّرُ", trans: "Qarrara / Yuqarriru", eng: "To decide", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "أَنْتَجَ / يُنْتِجُ", trans: "Antaja / Yuntiju", eng: "To produce", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "حَفِظَ / يَحْفَظُ", trans: "Ḥafiẓa / Yaḥfaẓu", eng: "To memorize / protect", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "شَرَحَ / يَشَرَحُ", trans: "Sharaha / Yashrahu", eng: "To explain", type: "Verb", cat: "Work, Intellect & Planning" },
+        { arabic: "نَامَ / يَنَامُ", trans: "Nāma / Yanāmu", eng: "To sleep", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "اسْتَيْقَظَ / يَسْتَيْقِظُ", trans: "Istayqaẓa / Yastayqiẓa", eng: "To wake up", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "غَسَلَ / يَغْسِلُ", trans: "Ghasala / Yaghsilu", eng: "To wash", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "لَبِسَ / يَلْبَسُ", trans: "Labisa / Yalbasu", eng: "To wear / get dressed", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "طَبَخَ / يَطْبَخُ", trans: "Ṭabakha / Yaṭbakhu", eng: "To cook", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "نَظَّفَ / يُنَظِّفُ", trans: "Naẓẓafa / Yunaẓẓifu", eng: "To clean", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "فَتَحَ / يَفْتَحُ", trans: "Fataḥa / Yaftaḥu", eng: "To open", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "أَغْلَقَ / يُغْلِقُ", trans: "Aghlaqa / Yughliqu", eng: "To close", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "اشْتَغَلَ / يَشْتَغِلُ", trans: "Ishtaghala / Yashtaghilu", eng: "To work / function", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "أَصْلَحَ / يُصْلِحُ", trans: "Aṣlaḥa / Yuṣliḥu", eng: "To fix / repair", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "رَتَّبَ / يُرَتِّبُ", trans: "Rattaba / Yurattibu", eng: "To organize / tidy up", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "اسْتَرَاحَ / يَسْتَرِيحُ", trans: "Istarāḥa / Yastarīḥu", eng: "To rest", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "لَعِبَ / يَلْعَبُ", trans: "La‘iba / Yal‘abu", eng: "To play", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "اشْتَكَى / يَشْتَكِي", trans: "Ishtakā / Yashtakī", eng: "To complain", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "عَاشَ / يَعِيشُ", trans: "‘Āsha / Ya‘īshu", eng: "To live", type: "Verb", cat: "Daily Routine & Domestics" },
+        { arabic: "شَعَرَ / يَشْعُرُ", trans: "Sha‘ara / Yash‘uru", eng: "To feel (+ بِـ)", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "أَصْبَحَ / يُصْبِحُ", trans: "Aṣbaḥa / Yuṣbiḥu", eng: "To become", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "احْتَاجَ / يَحْتَاجُ", trans: "Iḥtāja / Yaḥtāju", eng: "To need (+ إِلَى)", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "سَمَحَ / يَسْمَحُ", trans: "Samaha / Yasmahu", eng: "To allow / permit", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "مَنَعَ / يَمْنَعُ", trans: "Mana‘a / Yamna‘u", eng: "To prevent / ban", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "خَافَ / يَخَافُ", trans: "Khāfa / Yakhāfu", eng: "To fear (+ مِنْ)", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "رَفَضَ / يَرْفُضُ", trans: "Rafaḍa / Yarfuḍu", eng: "To refuse", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "قَبِلَ / يَقْبَلُ", trans: "Qabila / Yaqbalu", eng: "To accept", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "اتَّفَقَ / يَتَّفِقُ", trans: "Ittafaqa / Yattafiqu", eng: "To agree", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "اخْتَلَفَ / يَخْتَلِفُ", trans: "Ikhtalafa / Yakhtalifu", eng: "To differ / disagree", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "عَرَضَ / يَعْرِضُ", trans: "‘Araḍa / Ya‘riḍu", eng: "To present / show", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "ذَمَّ / يَذُمُّ", trans: "Dhamma / Yadhummu", eng: "To criticize / blame", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "مَدَحَ / يَمْدَحُ", trans: "Madaha / Yamdahu", eng: "To praise", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "ظَهَرَ / يَظْهَرُ", trans: "Ẓahara / Yaẓharu", eng: "To appear", type: "Verb", cat: "States & Evaluative Action" },
+        { arabic: "اخْتَفَى / يَخْتَفِي", trans: "Ikhtafā / Yakhtafī", eng: "To disappear", type: "Verb", cat: "States & Evaluative Action" }
+    ];
+
+    let currentTypeFilter = "all";
+    let currentSubcatFilter = "all";
+    let isFlashcardMode = false;
+
+    const vocabGrid = document.getElementById('vocabGrid');
+    const searchBar = document.getElementById('searchBar');
+    const typeTabs = document.getElementById('typeTabs');
+    const subcatFilter = document.getElementById('subcatFilter');
+    const flashcardToggle = document.getElementById('flashcardToggle');
+
+    function populateSubcategories() {
+        const subcats = new Set();
+        vocabData.forEach(item => {
+            if (currentTypeFilter === "all" || item.type === currentTypeFilter) {
+                subcats.add(item.cat);
+            }
+        });
+        
+        subcatFilter.innerHTML = '<option value="all">All Subcategories</option>';
+        Array.from(subcats).sort().forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            subcatFilter.appendChild(opt);
+        });
+        subcatFilter.value = currentSubcatFilter;
+    }
+
+    function renderCards() {
+        vocabGrid.innerHTML = '';
+        const searchTarget = searchBar.value.toLowerCase().trim();
+
+        const filtered = vocabData.filter(item => {
+            const matchesType = (currentTypeFilter === "all" || item.type === currentTypeFilter);
+            const matchesSubcat = (currentSubcatFilter === "all" || item.cat === currentSubcatFilter);
+            
+            const matchesSearch = !searchTarget || 
+                item.arabic.toLowerCase().includes(searchTarget) ||
+                item.trans.toLowerCase().includes(searchTarget) ||
+                item.eng.toLowerCase().includes(searchTarget);
+
+            return matchesType && matchesSubcat && matchesSearch;
+        });
+
+        if (isFlashcardMode) {
+            vocabGrid.classList.add('flashcard-mode');
+        } else {
+            vocabGrid.classList.remove('flashcard-mode');
+        }
+
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-top">
+                    <span class="tag">${item.type}</span>
+                    <span class="tag" style="background:#f0fdf4; color:#166534;">${item.cat}</span>
+                </div>
+                <div class="arabic-text">${item.arabic}</div>
+                <div>
+                    <div class="transliteration">${item.trans}</div>
+                    <div class="english-text">${item.eng}</div>
+                </div>
+            `;
+
+            if (isFlashcardMode) {
+                const engText = card.querySelector('.english-text');
+                card.addEventListener('click', () => {
+                    engText.classList.toggle('revealed');
+                });
+            }
+
+            vocabGrid.appendChild(card);
+        });
+    }
+
+    typeTabs.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-btn')) return;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        currentTypeFilter = e.target.getAttribute('data-type');
+        currentSubcatFilter = "all"; 
+        populateSubcategories();
+        renderCards();
+    });
+
+    subcatFilter.addEventListener('change', (e) => {
+        currentSubcatFilter = e.target.value;
+        renderCards();
+    });
+
+    searchBar.addEventListener('input', renderCards);
+
+    flashcardToggle.addEventListener('click', () => {
+        isFlashcardMode = !isFlashcardMode;
+        flashcardToggle.style.background = isFlashcardMode ? '#0284c7' : '#e0f2fe';
+        flashcardToggle.style.color = isFlashcardMode ? '#ffffff' : '#0284c7';
+        renderCards();
+    });
+
+    // Initialize application state
+    populateSubcategories();
+    renderCards();
+</script>
+
+</body>
+</html>
