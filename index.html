@@ -232,8 +232,7 @@
         </div>
         
         <div class="filter-tabs" id="typeTabs">
-            <button class="tab-btn active" data-type="all">All Items</button>
-            <button class="tab-btn" data-type="Connector">Connectors (30)</button>
+            <button class="tab-btn active" data-type="all">All Items (200)</button>
             <button class="tab-btn" data-type="Noun">Nouns (100)</button>
             <button class="tab-btn" data-type="Verb">Verbs (100)</button>
         </div>
@@ -250,9 +249,9 @@
 </div>
 
 <script>
-    // Embedded dataset compiled directly from requirements documentation
-    const vocabData = [
-        // PART 1: CONNECTORS (30)
+    // Pure master list dataset container
+    const rawVocabData = [
+        // PART 1: CONNECTORS (Retained in source array, but programmatically ignored)
         { arabic: "أَنَا", trans: "Anā", eng: "I", type: "Connector", cat: "Personal Pronouns" },
         { arabic: "أَنْتَ", trans: "Anta", eng: "You (Masculine singular)", type: "Connector", cat: "Personal Pronouns" },
         { arabic: "أَنْتِ", trans: "Anti", eng: "You (Feminine singular)", type: "Connector", cat: "Personal Pronouns" },
@@ -332,7 +331,7 @@
         { arabic: "كِتَاب [كُتُب]", trans: "Kitāb / Kutub", eng: "Book", type: "Noun", cat: "Food, Drink & Objects" },
         { arabic: "قَلَم [أَقْلَام]", trans: "Qalam / Aqlām", eng: "Pen", type: "Noun", cat: "Food, Drink & Objects" },
         { arabic: "وَرَقَة [أَوْرَاق]", trans: "Waraqah / Awrāq", eng: "Paper / Page", type: "Noun", cat: "Food, Drink & Objects" },
-        { arabic: "مِفْتَاح [مَفَاتِيح]", trans: "Miftāḥ / Mafātīḥ", eng: "Key", type: "Noun", cat: "Food, Drink & Objects" },
+        { arabic: "مِفْتَاح [مَفَاتِيح]", trans: "Miftāḥ / Mafَاتِيح", eng: "Key", type: "Noun", cat: "Food, Drink & Objects" },
         { arabic: "بَاب [أَبْوَاب]", trans: "Bāb / Abwāb", eng: "Door", type: "Noun", cat: "Food, Drink & Objects" },
         { arabic: "شُبَّاك [شَبَابِيك]", trans: "Shubbāk / Shabābīk", eng: "Window", type: "Noun", cat: "Food, Drink & Objects" },
         { arabic: "غُرْفَة [غُرَف]", trans: "Ghurfah / Ghuraf", eng: "Room", type: "Noun", cat: "Food, Drink & Objects" },
@@ -360,7 +359,7 @@
         { arabic: "مُشْكِلَة [مَشَاكِل]", trans: "Mushkilah / Mashākil", eng: "Problem", type: "Noun", cat: "Abstract Concepts" },
         { arabic: "فِكْرَة [أَفْكَار]", trans: "Fikrah / Afkār", eng: "Idea", type: "Noun", cat: "Abstract Concepts" },
         { arabic: "عَمَل [أَعْمَال]", trans: "‘Amal / A‘māl", eng: "Work / Job", type: "Noun", cat: "Abstract Concepts" },
-        { arabic: "مَال / فُلُوس", trans: "Māl / Fulūs", eng: "Money", type: "Noun", cat: "Abstract Concepts" },
+        { arabic: "مَال / فُلُوس", trans: "Māl / Flūs", eng: "Money", type: "Noun", cat: "Abstract Concepts" },
         { arabic: "حَقِيقَة [حَقَائِق]", trans: "Ḥaqīqah / Ḥaqā'iq", eng: "Truth / Fact", type: "Noun", cat: "Abstract Concepts" },
         { arabic: "رَأْي [آرَاء]", trans: "Ra'y / Ārā'", eng: "Opinion", type: "Noun", cat: "Abstract Concepts" },
         { arabic: "سَبَب [أَسْبَاب]", trans: "Sabab / Asbāb", eng: "Reason", type: "Noun", cat: "Abstract Concepts" },
@@ -491,6 +490,9 @@
         { arabic: "ظَهَرَ / يَظْهَرُ", trans: "Ẓahara / Yaẓharu", eng: "To appear", type: "Verb", cat: "States & Evaluative Action" },
         { arabic: "اخْتَفَى / يَخْتَفِي", trans: "Ikhtafā / Yakhtafī", eng: "To disappear", type: "Verb", cat: "States & Evaluative Action" }
     ];
+
+    // Filter array to strip Connectors out entirely at runtime 
+    const vocabData = rawVocabData.filter(item => item.type !== "Connector");
 
     let currentTypeFilter = "all";
     let currentSubcatFilter = "all";
